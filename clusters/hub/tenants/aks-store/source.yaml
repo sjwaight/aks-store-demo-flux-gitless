@@ -6,6 +6,6 @@ metadata:
 spec:
   interval: 5m
   provider: azure
-  url: oci://REGISTRY.example.com/platform/aks-store-demo-flux
+  url: oci://ghcr.io/sjwaight/aks-store-demo-flux-gitless:latest
   ref:
     tag: 0.1.0
