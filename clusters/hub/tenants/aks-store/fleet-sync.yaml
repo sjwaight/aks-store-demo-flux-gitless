@@ -1,0 +1,17 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: aks-store-demo-fleet-placement
+  namespace: tenant-aks-store
+spec:
+  interval: 10m
+  retryInterval: 1m
+  timeout: 5m
+  path: ./fleet/placements/aks-store
+  prune: true
+  serviceAccountName: aks-store-reconciler
+  dependsOn:
+    - name: aks-store-demo-app
+  sourceRef:
+    kind: OCIRepository
+    name: aks-store-demo

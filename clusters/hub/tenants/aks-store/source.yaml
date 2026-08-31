@@ -1,0 +1,11 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: aks-store-demo
+  namespace: tenant-aks-store
+spec:
+  interval: 5m
+  provider: azure
+  url: oci://REGISTRY.example.com/platform/aks-store-demo-flux
+  ref:
+    tag: 0.1.0

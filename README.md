@@ -82,6 +82,12 @@ kubectl create ns pets
 kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/aks-store-demo/main/aks-store-all-in-one.yaml -n pets
 ```
 
+## Run with Flux and KubeFleet
+
+This fork includes a gitless GitOps layout that packages the app as a Flux OCI artifact and uses KubeFleet to place the `pets` namespace across selected member clusters.
+
+See [Flux and KubeFleet deployment](./docs/flux-kubefleet-gitless.md).
+
 ## Run the app locally
 
 The application is designed to be [run in an AKS cluster](#run-the-app-on-azure-kubernetes-service-aks), but can also be run locally using Docker Compose.

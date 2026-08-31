@@ -1,0 +1,30 @@
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ClusterResourcePlacement
+metadata:
+  name: aks-store-demo
+spec:
+  resourceSelectors:
+    - group: ""
+      version: v1
+      kind: Namespace
+      name: pets
+      selectionScope: NamespaceWithResources
+  policy:
+    placementType: PickAll
+    affinity:
+      clusterAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          clusterSelectorTerms:
+            - labelSelector:
+                matchLabels:
+                  aks-store-demo/enabled: "true"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 25%
+    applyStrategy:
+      type: ServerSideApply
+      comparisonOption: PartialComparison
+      whenToApply: IfNotDrifted
+      whenToTakeOver: IfNoDiff
