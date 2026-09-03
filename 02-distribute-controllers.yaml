@@ -1,0 +1,49 @@
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ResourcePlacement
+metadata:
+  name: flux-controllers
+  namespace: flux-system
+spec:
+  resourceSelectors:
+
+    # Service Accounts
+    - group: ""
+      version: v1
+      kind: ServiceAccount
+      name: source-controller
+
+    - group: ""
+      version: v1
+      kind: ServiceAccount
+      name: kustomize-controller
+
+    - group: ""
+      version: v1
+      kind: ServiceAccount
+      name: helm-controller
+
+    # Deployments
+    - group: apps
+      version: v1
+      kind: Deployment
+      name: source-controller
+
+    - group: apps
+      version: v1
+      kind: Deployment
+      name: kustomize-controller
+
+    - group: apps
+      version: v1
+      kind: Deployment
+      name: helm-controller
+
+  policy:
+    placementType: PickAll
+    affinity:
+      clusterAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          clusterSelectorTerms:
+            - labelSelector:
+                matchLabels:
+                  aks-store-demo/enabled: "true"

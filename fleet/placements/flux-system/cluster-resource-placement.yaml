@@ -1,0 +1,58 @@
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ClusterResourcePlacement
+metadata:
+  name: flux-system
+spec:
+  resourceSelectors:
+    - group: ""
+      version: v1
+      kind: Namespace
+      name: flux-system
+      selectionScope: NamespaceWithResources
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: buckets.source.toolkit.fluxcd.io
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: externalartifacts.source.toolkit.fluxcd.io
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: gitrepositories.source.toolkit.fluxcd.io
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: helmcharts.source.toolkit.fluxcd.io
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: helmrepositories.source.toolkit.fluxcd.io
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: ocirepositories.source.toolkit.fluxcd.io
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: kustomizations.kustomize.toolkit.fluxcd.io
+  policy:
+    placementType: PickAll
+    affinity:
+      clusterAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          clusterSelectorTerms:
+            - labelSelector:
+                matchLabels:
+                  aks-store-demo/enabled: "true"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 25%
+    applyStrategy:
+      type: ServerSideApply
+      comparisonOption: PartialComparison
+      whenToApply: IfNotDrifted
+      whenToTakeOver: IfNoDiff

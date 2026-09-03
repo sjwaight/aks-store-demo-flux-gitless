@@ -1,0 +1,68 @@
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ClusterResourcePlacement
+metadata:
+  name: flux-crds
+spec:
+  resourceSelectors:
+
+    - group: ""
+      version: v1
+      kind: Namespace
+      name: flux-system
+      selectionScope: NamespaceOnly
+  
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: gitrepositories.source.toolkit.fluxcd.io
+
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: ocirepositories.source.toolkit.fluxcd.io
+
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: helmrepositories.source.toolkit.fluxcd.io
+
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: helmcharts.source.toolkit.fluxcd.io
+
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: buckets.source.toolkit.fluxcd.io
+
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: kustomizations.kustomize.toolkit.fluxcd.io
+
+    - group: apiextensions.k8s.io
+      version: v1
+      kind: CustomResourceDefinition
+      name: helmreleases.helm.toolkit.fluxcd.io
+
+    # Cluster-scoped RBAC
+    - group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: crd-controller-flux-system
+
+    - group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRoleBinding
+      name: cluster-reconciler-flux-system
+
+  policy:
+    placementType: PickAll
+    affinity:
+      clusterAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          clusterSelectorTerms:
+            - labelSelector:
+                matchLabels:
+                  aks-store-demo/enabled: "true"

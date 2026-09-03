@@ -1,0 +1,29 @@
+
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ResourceOverride
+metadata:
+  name: aks-store-demo-member-01-override
+  namespace: aks-store-demo
+spec:
+
+  placement:
+    name: rp-rollout-flux-aks-store-demo
+    scope: Namespaced
+
+  resourceSelectors:
+  - group: helm.toolkit.fluxcd.io
+    version: v2
+    kind: HelmRelease
+    name: store-helm-release
+
+  policy:
+    overrideRules:
+    - clusterSelector:
+        clusterSelectorTerms:
+        - labelSelector:
+            matchLabels:
+              kubernetes-fleet.io/member-name: aks-member-place-01-fm
+      jsonPatchOverrides:
+      - op: replace
+        path: /spec/chart/spec/version
+        value: "1.5.0"

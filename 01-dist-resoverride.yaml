@@ -1,0 +1,52 @@
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ResourceOverride
+metadata:
+  name: podinfo-cluster-customization
+  namespace: flux-system
+spec:
+  placement:
+    name: podinfo-flux
+
+  resourceSelectors:
+    - group: kustomize.toolkit.fluxcd.io
+      version: v1
+      kind: Kustomization
+      name: podinfo
+
+  policy:
+    overrideRules:
+      - clusterSelector:
+          clusterSelectorTerms:
+            - labelSelector:
+                matchLabels:
+                  environment: canary
+        jsonPatchOverrides:
+          - op: replace
+            path: /spec/postBuild/substitute/PODINFO_REPLICAS
+            value: "2"
+
+          - op: replace
+            path: /spec/postBuild/substitute/PODINFO_ENVIRONMENT
+            value: "canary"
+
+          - op: replace
+            path: /spec/postBuild/substitute/PODINFO_UI_COLOR
+            value: "#ff8c00"
+
+      - clusterSelector:
+          clusterSelectorTerms:
+            - labelSelector:
+                matchLabels:
+                  environment: production
+        jsonPatchOverrides:
+          - op: replace
+            path: /spec/postBuild/substitute/PODINFO_REPLICAS
+            value: "3"
+
+          - op: replace
+            path: /spec/postBuild/substitute/PODINFO_ENVIRONMENT
+            value: "production"
+
+          - op: replace
+            path: /spec/postBuild/substitute/PODINFO_UI_COLOR
+            value: "#0078d4"

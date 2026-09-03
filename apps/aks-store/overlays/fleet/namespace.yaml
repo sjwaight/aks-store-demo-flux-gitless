@@ -5,4 +5,3 @@ metadata:
   labels:
     app.kubernetes.io/name: aks-store-demo
     app.kubernetes.io/part-of: aks-store-demo
-    kubefleet.dev/propagate: "true"

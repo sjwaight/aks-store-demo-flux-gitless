@@ -1,0 +1,33 @@
+# apiVersion: source.toolkit.fluxcd.io/v1
+# kind: HelmRepository
+# metadata:
+#   name: store-helm-repo
+#   namespace: aks-store-demo
+# spec:
+#   interval: 1m
+#   type: oci
+#   url: oci://azure-samples.github.io/aks-store-demo
+# ---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: store-helm-repo
+  namespace: aks-store-demo
+spec:
+  interval: 1m
+  url: https://azure-samples.github.io/aks-store-demo
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: store-helm-release
+  namespace: aks-store-demo
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: aks-store-demo-chart
+      version: "1.6.0"
+      sourceRef:
+        kind: HelmRepository
+        name: store-helm-repo

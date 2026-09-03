@@ -1,0 +1,253 @@
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ClusterResourcePlacement
+metadata:
+  creationTimestamp: "2026-09-01T01:21:12Z"
+  finalizers:
+  - kubernetes-fleet.io/crp-cleanup
+  - kubernetes-fleet.io/scheduler-cleanup
+  generation: 1
+  labels:
+    kustomize.toolkit.fluxcd.io/name: aks-store-demo-fleet-placement
+    kustomize.toolkit.fluxcd.io/namespace: pets
+  name: aks-store-demo
+  resourceVersion: "3359"
+  uid: 8eb8c52d-9da5-4714-b6a9-1bce8d90e934
+spec:
+  policy:
+    affinity:
+      clusterAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          clusterSelectorTerms:
+          - labelSelector:
+              matchLabels:
+                aks-store-demo/enabled: "true"
+    placementType: PickAll
+  resourceSelectors:
+  - group: ""
+    kind: Namespace
+    name: pets
+    selectionScope: NamespaceWithResources
+    version: v1
+  revisionHistoryLimit: 10
+  statusReportingScope: ClusterScopeOnly
+  strategy:
+    applyStrategy:
+      comparisonOption: PartialComparison
+      serverSideApplyConfig:
+        force: false
+      type: ServerSideApply
+      whenToApply: IfNotDrifted
+      whenToTakeOver: IfNoDiff
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 1
+      unavailablePeriodSeconds: 60
+    type: RollingUpdate
+status:
+  conditions:
+  - lastTransitionTime: "2026-09-01T01:21:13Z"
+    message: found all cluster needed as specified by the scheduling policy, found
+      2 cluster(s)
+    observedGeneration: 1
+    reason: SchedulingPolicyFulfilled
+    status: "True"
+    type: ClusterResourcePlacementScheduled
+  - lastTransitionTime: "2026-09-01T01:21:13Z"
+    message: All 2 cluster(s) start rolling out the latest resource
+    observedGeneration: 1
+    reason: RolloutStarted
+    status: "True"
+    type: ClusterResourcePlacementRolloutStarted
+  - lastTransitionTime: "2026-09-01T01:21:13Z"
+    message: No override rules are configured for the selected resources
+    observedGeneration: 1
+    reason: NoOverrideSpecified
+    status: "True"
+    type: ClusterResourcePlacementOverridden
+  - lastTransitionTime: "2026-09-01T01:21:13Z"
+    message: Works(s) are succcesfully created or updated in 2 target cluster(s)'
+      namespaces
+    observedGeneration: 1
+    reason: WorkSynchronized
+    status: "True"
+    type: ClusterResourcePlacementWorkSynchronized
+  - lastTransitionTime: "2026-09-01T01:21:13Z"
+    message: Failed to apply resources to 2 cluster(s), please check the `failedPlacements`
+      status
+    observedGeneration: 1
+    reason: ApplyFailed
+    status: "False"
+    type: ClusterResourcePlacementApplied
+  observedResourceIndex: "0"
+  placementStatuses:
+  - clusterName: kind-kf-member-01
+    conditions:
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: 'Successfully scheduled resources for placement in "kind-kf-member-01"
+        (affinity score: 0, topology spread score: 0): picked by scheduling policy'
+      observedGeneration: 1
+      reason: Scheduled
+      status: "True"
+      type: Scheduled
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: Detected the new changes on the resources and started the rollout process
+      observedGeneration: 1
+      reason: RolloutStarted
+      status: "True"
+      type: RolloutStarted
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: No override rules are configured for the selected resources
+      observedGeneration: 1
+      reason: NoOverrideSpecified
+      status: "True"
+      type: Overridden
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: All of the works are synchronized to the latest
+      observedGeneration: 1
+      reason: AllWorkSynced
+      status: "True"
+      type: WorkSynchronized
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: Work object aks-store-demo-work has failed to apply
+      observedGeneration: 1
+      reason: NotAllWorkHaveBeenApplied
+      status: "False"
+      type: Applied
+    failedPlacements:
+    - condition:
+        lastTransitionTime: "2026-09-01T01:21:13Z"
+        message: 'Failed to apply the manifest (error: failed to decode manifest:
+          failed to find GVR from member cluster client REST mapping: no matches for
+          kind "Kustomization" in version "kustomize.toolkit.fluxcd.io/v1")'
+        reason: DecodingErred
+        status: "False"
+        type: Applied
+      group: kustomize.toolkit.fluxcd.io
+      kind: Kustomization
+      name: aks-store-demo-app
+      namespace: pets
+      version: v1
+    - condition:
+        lastTransitionTime: "2026-09-01T01:21:13Z"
+        message: 'Failed to apply the manifest (error: failed to decode manifest:
+          failed to find GVR from member cluster client REST mapping: no matches for
+          kind "Kustomization" in version "kustomize.toolkit.fluxcd.io/v1")'
+        reason: DecodingErred
+        status: "False"
+        type: Applied
+      group: kustomize.toolkit.fluxcd.io
+      kind: Kustomization
+      name: aks-store-demo-fleet-placement
+      namespace: pets
+      version: v1
+    - condition:
+        lastTransitionTime: "2026-09-01T01:21:13Z"
+        message: 'Failed to apply the manifest (error: failed to decode manifest:
+          failed to find GVR from member cluster client REST mapping: no matches for
+          kind "OCIRepository" in version "source.toolkit.fluxcd.io/v1")'
+        reason: DecodingErred
+        status: "False"
+        type: Applied
+      group: source.toolkit.fluxcd.io
+      kind: OCIRepository
+      name: aks-store-demo
+      namespace: pets
+      version: v1
+    observedResourceIndex: "0"
+  - clusterName: kind-kf-member-02
+    conditions:
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: 'Successfully scheduled resources for placement in "kind-kf-member-02"
+        (affinity score: 0, topology spread score: 0): picked by scheduling policy'
+      observedGeneration: 1
+      reason: Scheduled
+      status: "True"
+      type: Scheduled
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: Detected the new changes on the resources and started the rollout process
+      observedGeneration: 1
+      reason: RolloutStarted
+      status: "True"
+      type: RolloutStarted
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: No override rules are configured for the selected resources
+      observedGeneration: 1
+      reason: NoOverrideSpecified
+      status: "True"
+      type: Overridden
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: All of the works are synchronized to the latest
+      observedGeneration: 1
+      reason: AllWorkSynced
+      status: "True"
+      type: WorkSynchronized
+    - lastTransitionTime: "2026-09-01T01:21:13Z"
+      message: Work object aks-store-demo-work has failed to apply
+      observedGeneration: 1
+      reason: NotAllWorkHaveBeenApplied
+      status: "False"
+      type: Applied
+    failedPlacements:
+    - condition:
+        lastTransitionTime: "2026-09-01T01:21:13Z"
+        message: 'Failed to apply the manifest (error: failed to decode manifest:
+          failed to find GVR from member cluster client REST mapping: no matches for
+          kind "Kustomization" in version "kustomize.toolkit.fluxcd.io/v1")'
+        reason: DecodingErred
+        status: "False"
+        type: Applied
+      group: kustomize.toolkit.fluxcd.io
+      kind: Kustomization
+      name: aks-store-demo-app
+      namespace: pets
+      version: v1
+    - condition:
+        lastTransitionTime: "2026-09-01T01:21:13Z"
+        message: 'Failed to apply the manifest (error: failed to decode manifest:
+          failed to find GVR from member cluster client REST mapping: no matches for
+          kind "Kustomization" in version "kustomize.toolkit.fluxcd.io/v1")'
+        reason: DecodingErred
+        status: "False"
+        type: Applied
+      group: kustomize.toolkit.fluxcd.io
+      kind: Kustomization
+      name: aks-store-demo-fleet-placement
+      namespace: pets
+      version: v1
+    - condition:
+        lastTransitionTime: "2026-09-01T01:21:13Z"
+        message: 'Failed to apply the manifest (error: failed to decode manifest:
+          failed to find GVR from member cluster client REST mapping: no matches for
+          kind "OCIRepository" in version "source.toolkit.fluxcd.io/v1")'
+        reason: DecodingErred
+        status: "False"
+        type: Applied
+      group: source.toolkit.fluxcd.io
+      kind: OCIRepository
+      name: aks-store-demo
+      namespace: pets
+      version: v1
+    observedResourceIndex: "0"
+  selectedResources:
+  - kind: Namespace
+    name: pets
+    version: v1
+  - kind: ServiceAccount
+    name: aks-store-reconciler
+    namespace: pets
+    version: v1
+  - group: kustomize.toolkit.fluxcd.io
+    kind: Kustomization
+    name: aks-store-demo-app
+    namespace: pets
+    version: v1
+  - group: kustomize.toolkit.fluxcd.io
+    kind: Kustomization
+    name: aks-store-demo-fleet-placement
+    namespace: pets
+    version: v1
+  - group: source.toolkit.fluxcd.io
+    kind: OCIRepository
+    name: aks-store-demo
+    namespace: pets
+    version: v1

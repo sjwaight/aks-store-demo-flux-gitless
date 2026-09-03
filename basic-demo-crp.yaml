@@ -1,0 +1,19 @@
+
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ClusterResourcePlacement
+metadata:
+  name: crp-rollout-flux-aks-store-demo
+spec:
+  resourceSelectors:
+    - group: ""
+      version: v1
+      kind: Namespace
+      name: aks-store-demo
+      selectionScope: NamespaceOnly
+
+  policy:
+    placementType: PickFixed
+    clusterNames:
+    - aks-member-place-01-fm
+    # - kind-kf-member-01
+    # - kind-kf-member-02

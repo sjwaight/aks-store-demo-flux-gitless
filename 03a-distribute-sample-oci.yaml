@@ -1,0 +1,32 @@
+apiVersion: placement.kubernetes-fleet.io/v1
+kind: ClusterResourcePlacement
+metadata:
+  name: podinfo-sample
+spec:
+  resourceSelectors:
+    # ClusterResourcePlacement can only select cluster-scoped resources directly, so the
+    # HelmRepository/HelmRelease in 03-sample.yaml are placed via their namespace.
+    - group: ""
+      version: v1
+      kind: Namespace
+      name: podinfo
+      selectionScope: NamespaceWithResources
+  policy:
+    placementType: PickAll
+    affinity:
+      clusterAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          clusterSelectorTerms:
+            - labelSelector:
+                matchLabels:
+                  aks-store-demo/enabled: "true"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 25%
+    applyStrategy:
+      type: ServerSideApply
+      comparisonOption: PartialComparison
+      whenToApply: IfNotDrifted
+      whenToTakeOver: IfNoDiff
