@@ -67,7 +67,7 @@ jobs:
 
           workdir="$(mktemp -d)"
           # Layer layout and media types must match what Flux source-controller expects.
-          tar -czf "$workdir/artifact.tgz" -C "$GITHUB_WORKSPACE/kustomize" .
+          tar -czf "$workdir/artifact.tgz" -C "$GITHUB_WORKSPACE/kustomize/base" .
           echo '{}' > "$workdir/config.json"
 
           cd "$workdir"
