@@ -4,15 +4,8 @@ on:
   push:
     branches:
       - main
-    tags:
-      - '*'
 
   workflow_dispatch:
-    inputs:
-      tag:
-        description: OCI artifact tag (defaults to the short commit SHA)
-        required: false
-        type: string
 
 permissions:
   contents: read
@@ -33,32 +26,27 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Flux CLI
-        uses: fluxcd/flux2/action@v2.6.4
+      - name: Set up ORAS CLI
+        uses: oras-project/setup-oras@v1
         with:
-          version: 2.6.4
+          version: 1.3.4
 
       - name: Set artifact metadata
         id: metadata
-        env:
-          REQUESTED_TAG: ${{ inputs.tag }}
         shell: bash
         run: |
           repository="$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          tag="$(yq -r .appVersion ./charts/aks-store-demo/Chart.yaml)"
 
-          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
-            tag="$GITHUB_REF_NAME"
-          elif [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
-            tag="latest"
-          elif [[ -n "$REQUESTED_TAG" ]]; then
-            tag="$REQUESTED_TAG"
-          else
-            tag="${GITHUB_SHA::7}"
+          if [[ -z "$tag" || "$tag" == "null" ]]; then
+            echo "Could not read appVersion from charts/aks-store-demo/Chart.yaml" >&2
+            exit 1
           fi
 
           echo "artifact=ghcr.io/$repository" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "revision=$GITHUB_REF_NAME@sha1:$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+          echo "revision=$tag@sha1:$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # v3.1.0
@@ -72,12 +60,26 @@ jobs:
           ARTIFACT: ${{ steps.metadata.outputs.artifact }}
           TAG: ${{ steps.metadata.outputs.tag }}
           REVISION: ${{ steps.metadata.outputs.revision }}
+          CREATED: ${{ steps.metadata.outputs.created }}
         shell: bash
         run: |
-          flux push artifact "oci://$ARTIFACT:$TAG" \
-            --path=. \
-            --source="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
-            --revision="$REVISION"
+          set -euo pipefail
+
+          workdir="$(mktemp -d)"
+          # Layer layout and media types must match what Flux source-controller expects.
+          tar --exclude=./.git --exclude=./.github -czf "$workdir/artifact.tgz" -C "$GITHUB_WORKSPACE" .
+          echo '{}' > "$workdir/config.json"
+
+          cd "$workdir"
+
+          oras push "$ARTIFACT:$TAG" \
+            --config "config.json:application/vnd.cncf.flux.config.v1+json" \
+            --annotation "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --annotation "org.opencontainers.image.revision=$REVISION" \
+            --annotation "org.opencontainers.image.created=$CREATED" \
+            "artifact.tgz:application/vnd.cncf.flux.content.v1.tar+gzip"
+
+          oras tag "$ARTIFACT:$TAG" latest
 
       - name: Show artifact reference
         env:
