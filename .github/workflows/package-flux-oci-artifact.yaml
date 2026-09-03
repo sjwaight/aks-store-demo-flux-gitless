@@ -29,7 +29,7 @@ jobs:
       - name: Set up ORAS CLI
         uses: oras-project/setup-oras@v1
         with:
-          version: 1.3.4
+          version: 1.3.3
 
       - name: Set artifact metadata
         id: metadata
