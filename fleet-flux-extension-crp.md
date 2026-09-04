@@ -167,7 +167,7 @@ Roll out the `ServiceAccount` using resource placement.
 
 ```yaml
 apiVersion: placement.kubernetes-fleet.io/v1
-kind: ClusterResourcePlacement
+kind: ResourcePlacement
 metadata:
   name: rp-rollout-sa
   namespace: aks-store-demo
