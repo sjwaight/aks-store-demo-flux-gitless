@@ -19,6 +19,8 @@ Run the bicep to deploy AKS cluster with Flux extension installed, minus any dep
 
 Once deployed, add the cluster to an existing Fleet Manager with a hub cluster.
 
+Flux extension resource requirements: [Microsoft Learn](https://learn.microsoft.com/azure/azure-arc/kubernetes/extensions-troubleshooting#memory-and-cpu-resource-requirements-for-installing-the-microsoftflux-extension).
+
 ```bicep
 @description('AKS cluster name')
 param aksName string = 'aks-member-flux-01'
@@ -43,7 +45,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2025-02-01' = {
       {
         name: 'system'
         mode: 'System'
-        count: 1
+        count: 2
         vmSize: 'Standard_D2s_v5'
         osType: 'Linux'
         type: 'VirtualMachineScaleSets'
