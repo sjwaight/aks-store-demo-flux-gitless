@@ -1,4 +1,4 @@
-name: package-flux-oci-artifact
+name: package-oci-artifact
 
 on:
   push:
@@ -14,11 +14,11 @@ permissions:
   packages: write
 
 concurrency:
-  group: package-flux-oci-artifact-${{ github.ref }}
+  group: package-oci-artifact-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  package-flux-oci-artifact:
+  package-oci-artifact:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
